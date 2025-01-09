@@ -275,3 +275,34 @@ module Integers where
     infixl 5 _-_
     _-_ : ℤ → ℤ → ℤ
     x - y = x + (- y)
+
+    infixl 6 _*_
+    _*_ : ℤ → ℤ → ℤ
+    x * +0 = +0
+    x * +[1+ ℕ.zero ] = x
+    x * -[1+ ℕ.zero ] = - x
+    x * +[1+ ℕ.suc y ] = +[1+ y ] * x + x
+    x * -[1+ ℕ.suc y ] = -[1+ y ] * x - x
+
+    module Testing-It where
+      open import Relation.Binary.PropositionalEquality
+
+      _ : - (+ 4) * - (+ 6) ≡ + 24
+      _ = refl
+
+      _ : + 8 - (- (+ 3)) ≡ + 11
+      _ = refl
+
+open import Data.Nat 
+  using (ℕ; zero; suc; _+_; _*_; _^_; _∸_)
+  public
+
+open Naturals
+  using (one; two; three; four; IsEven)
+  renaming ( zero-even    to z-even
+           ; suc-suc-even to ss-even )
+  public
+
+open import Data.Maybe
+  using (Maybe; just; nothing)
+  public
