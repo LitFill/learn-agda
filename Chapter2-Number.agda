@@ -231,17 +231,20 @@ module Integers where
     +_     : ℕ → ℤ
     -[1+_] : ℕ → ℤ
 
+  pattern +[1+_] n = + ℕ.suc n
+  pattern +0 = + ℕ.zero
+
   0ℤ : ℤ
-  0ℤ = + 0
+  0ℤ = +0
 
   1ℤ : ℤ
-  1ℤ = + 1
+  1ℤ = +[1+ ℕ.zero ]
 
   -1ℤ : ℤ
-  -1ℤ = -[1+ 0 ]
+  -1ℤ = -[1+ ℕ.zero ]
 
   suc : ℤ → ℤ
-  suc (+ x) = + (ℕ.suc x)
+  suc (+ x) = +[1+ x ]
   suc -[1+ ℕ.zero ] = 0ℤ
   suc -[1+ ℕ.suc x ] = -[1+ x ]
 
@@ -251,9 +254,24 @@ module Integers where
   pred -[1+ x ] = -[1+ ℕ.suc x ]
 
   -_ : ℤ → ℤ
-  - (+ ℕ.zero) = 0ℤ
-  - (+ ℕ.suc x) = -[1+ x ]
-  - -[1+ x ] = + ℕ.suc x
+  - +0 = +0
+  - +[1+ x ] = -[1+ x ]
+  - -[1+ x ] = +[1+ x ]
+  
+  module Naive-Addition where
+    _⊖_ : ℕ → ℕ → ℤ
+    ℕ.zero  ⊖ ℕ.zero  = +0
+    ℕ.zero  ⊖ ℕ.suc b = -[1+ b ]
+    ℕ.suc a ⊖ ℕ.zero  = +[1+ a ]
+    ℕ.suc a ⊖ ℕ.suc b = a ⊖ b
 
-  _ : - (+ 5) ≡ -[1+ 4 ]
-  _ = refl
+    infixl 5 _+_
+    _+_ : ℤ → ℤ → ℤ
+    + x      + + y      = + (x ℕ.+ y)
+    + x      + -[1+ y ] = x ⊖ ℕ.suc y
+    -[1+ x ] + + y      = y ⊖ ℕ.suc x
+    -[1+ x ] + -[1+ y ] = -[1+ x ℕ.+ ℕ.suc y ]
+
+    infixl 5 _-_
+    _-_ : ℤ → ℤ → ℤ
+    x - y = x + (- y)
